@@ -15,50 +15,80 @@ class MainTest {
     @BeforeEach
     void beforeEach() {
         list = new ArrayList<>();
-        numberOfElements = 10_000_000;
+        numberOfElements = 100_000;
     }
 
     @Test
-    void addTest() {
-        printTime(this::fillList);
+    void addToBeginningTest() {
+        long time = getTIme(this::fillListFromBeginning);
+        log(time, "addToBeginningTest");
     }
 
     @Test
-    void removeFromEndTest() {
-        fillList(list);
-        printTime(strings -> {
-            ListIterator<String> listIterator = strings.listIterator(list.size());
-            while (listIterator.hasPrevious()) {
-                listIterator.previous();
-                listIterator.remove();
-            }
-            System.out.println(strings);
-        });
+    void addToEndTest() {
+        long time = getTIme(this::fillListFromEnd);
+        log(time, "addToEndTest");
     }
 
     @Test
     void removeFromBeginningTest() {
-        fillList(list);
-        printTime(strings -> {
-            ListIterator<String> listIterator = strings.listIterator();
-            while (listIterator.hasNext()) {
-                listIterator.next();
-                listIterator.remove();
-            }
-            System.out.println(strings);
-        });
+        fillListFromEnd(list);
+        long time = getTIme(MainTest::removeFormBeginning);
+        log(time, "removeFromBeginningTest");
     }
 
-    private void printTime(Consumer<List<String>> consumer) {
+    @Test
+    void removeFromMiddleTest() {
+        fillListFromEnd(list);
+        long time = getTIme(MainTest::removeFromMiddle);
+        log(time, "removeFromMiddleTest");
+    }
+
+    @Test
+    void removeFromEndTest() {
+        fillListFromEnd(list);
+        long time = getTIme(this::removeFromEnd);
+        log(time, "removeFromEndTest");
+    }
+
+    private static void removeFormBeginning(List<String> strings) {
+        while (!strings.isEmpty()) {
+            strings.remove(0);
+        }
+    }
+
+    private static void removeFromMiddle(List<String> strings) {
+        while (!strings.isEmpty()) {
+            strings.remove(strings.size() / 2);
+        }
+    }
+
+    private void removeFromEnd(List<String> strings) {
+        while (!strings.isEmpty()) {
+            strings.remove(strings.size() - 1);
+        }
+    }
+
+    private void log(long time, String testName) {
+        System.out.println(list.getClass().getTypeName() + ": " + testName + " - " + time);
+    }
+
+    private Long getTIme(Consumer<List<String>> consumer) {
         long startingTime = System.currentTimeMillis();
         consumer.accept(list);
         long finishingTile = System.currentTimeMillis();
-        System.out.println(finishingTile - startingTime);
+        return finishingTile - startingTime;
     }
 
-    private void fillList(List<String> strings) {
+    private void fillListFromEnd(List<String> strings) {
         for (int i = 0; i < numberOfElements; i++) {
             strings.add("" + i);
+        }
+    }
+
+    private void fillListFromBeginning(List<String> strings) {
+        for (int i = 0; i < numberOfElements; i++) {
+            strings.add(0, "" + i);
         }
     }
 }
