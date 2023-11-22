@@ -3,6 +3,7 @@ package org.example.collections.concurrent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.sql.Array;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -15,7 +16,7 @@ class MainTest {
     @BeforeEach
     void beforeEach() {
         list = new ArrayList<>();
-        numberOfElements = 100_000;
+        numberOfElements = 200_000;
     }
 
     @Test
@@ -49,6 +50,13 @@ class MainTest {
         fillListFromEnd(list);
         long time = getTIme(this::removeFromEnd);
         log(time, "removeFromEndTest");
+    }
+
+    @Test
+    void iterationTest() {
+        fillListFromEnd(list);
+        long time = getTIme(this::iterate);
+        log(time, "iterationTest");
     }
 
     private static void removeFormBeginning(List<String> strings) {
@@ -89,6 +97,12 @@ class MainTest {
     private void fillListFromBeginning(List<String> strings) {
         for (int i = 0; i < numberOfElements; i++) {
             strings.add(0, "" + i);
+        }
+    }
+
+    private void iterate(List<String> strings) {
+        for (int i = 0; i < numberOfElements; i++) {
+            String value = strings.get(i);
         }
     }
 }
